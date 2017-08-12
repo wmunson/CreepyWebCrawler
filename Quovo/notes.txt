@@ -1,0 +1,16 @@
+Add cik try/except incase input is wrong.
+
+TASK:
+1
+Take user input for following query string
+https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001166559&type=&dateb=&owner=exclude&count=100
+=>
+2
+parse throught list looking for '13F', => save doc links.
+3
+for each link in list, parse through new list looking for '.xml' =>save new list 
+4
+save objs w/ 11 attrs:Name Of Issuer, Title of Class, Cusip, Value(x$1000), SHR OR SH/PRN AMT PRN, PUT/CALL, INVESTMENT DISCRETION, OTHER MANAGER, SOLE VOTING AUTH, SHARED VOTING AUTH, NO VOTING AUTH
+
+
+Need to break table down further to allow re to search for '13F' in step 2 

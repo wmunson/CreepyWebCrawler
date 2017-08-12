@@ -4,6 +4,8 @@ import requests
 import re
 # from selenium import webdriver
 from bs4 import BeautifulSoup as bs
+from models import RowMatch
+
 
 cik_test = "0001166559"
 date_test = ""
@@ -29,29 +31,45 @@ print('=========================================================================
 print('========================================================================================================')
 print('===============================================================================================')
 print('=================================================================')
-print(dir(doc))
+# print(dir(doc))
 table = doc.find_all(summary="Results")
-print(len(table))
+# print(len(table))
 
-for row in table.find_all("tr")[1:]:  # skipping header row
-    cells = row.find_all("td")
-    print(cells[0].text, cells[1].find('a').text)
+# for row in table.find_all("tr")[1:]:  # skipping header row
+#     print(row)
+#     cells = row.find_all("td")
+#     # print(cells[0].text, cells[1].find('a').text)
 
 
 
-
-# tr_list = table[0].find_all('tr')
-# # print(type(tr))
-# # print(dir(doc))
-# # print(tr_list)
-# for tr in tr_list:
-# 	td = tr.find_all('td')
-# 	print(len(td))
-# 	# print(len(tr))
-# 	# print(tr)
-# 	print(dir(td))
-# 	print(td.index('href'))
-# 	# for item in td:
-# 		# print(len(item))
-# # print(dir(tr[0]))
-# print(len(tr_list))
+match_row_list =[]
+row_list = table[0].find_all('tr')
+# print(type(tr))
+# print(dir(doc))
+# print(tr_list)
+for row in row_list[1:]:  #Skipping header row which is empty
+	td = row.find_all('td')
+	# print(len(td))
+	file_type = td[0].text
+	# print(file_type)
+	type_check = re.match(r"13F",file_type)
+	if type_check != None:
+		print(td[0].text)
+		href = td[1].select('a')[0]['href']
+		detail = td[2].text
+		date = td[3].text 
+		print(href)
+		print(detail)
+		print(date)
+		match_row_list.append(RowMatch(file_type=file_type,
+										file_link=href,
+										date=date,
+										details=detail))
+	# print(dir(td))
+	# print(td.index('href'))
+	# for item in td:
+		# print(item)
+# print(dir(row[0]))
+print(len(row_list))
+print(match_row_list)
+print(len(match_row_list))

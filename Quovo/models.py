@@ -31,3 +31,14 @@ class Fund:
 		self.name = name
 		self.year = year
 		self.list_holdings = list_holdings
+
+class RowMatch:
+
+	def __init__(self, file_type, file_link, date, details):
+		self.file_type = file_type
+		self.file_link = file_link
+		self.date = date
+		self.details = details
+
+	def __str__(self):
+		return self.description, self.date

@@ -1,4 +1,4 @@
-import sys
+
 import csv
 import requests
 import re
@@ -6,51 +6,41 @@ import re
 from bs4 import BeautifulSoup as bs
 from models import RowMatch, Fund, Holding
 
+def inital_req():
 
-cik_test = "0001166559"
-date_test = ""
-type_test = "13F"
-count_test = "10000"
+	cik_test = "0001166559"
+	date_test = ""
+	type_test = "13F"
+	count_test = "10000"
 
-# chrome = webdriver.Chrome(executable_path="chromedriver.exe")
-
-url_start = "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK="+cik_test+"&Stype="+type_test+"&dateb="+date_test+"&owner=exclude&count="+count_test
-url2 = 'https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001166559&type=&dateb=&owner=exclude&count=100'	
-		
-# https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001166559&owner=exclude&count=40
-# https://www.sec.gov/cgi-bin/browse-edgar?CIK=0001166559&owner=exclude&action=getcompany
-# https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001166559&type=&dateb=&owner=exclude&count=100
-# https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001166559&type=&dateb=&owner=exclude&count=10000
-# https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK="+cik_test+"type="+type_test+"&dateb="+date_test+"&owner=exclude&count="+count_test
-
-
+	url_start = "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK="+cik_test+"&Stype="+type_test+"&dateb="+date_test+"&owner=exclude&count="+count_test
 # Inital request ###########
+		
+	match_row_list =[]
 
-match_row_list =[]
-req = requests.get(url_start)
-# ch = chrome.get(url_start)
-# print(ch)
-doc = bs(req.text, "html.parser")
-print('===========================================================================================')
-print('========================================================================================================')
-print('===============================================================================================')
-print('=================================================================')
-# print(dir(doc))
-comp_div = doc.find_all("span")
-print(len(comp_div))
-for span in comp_div:
-	name_match = re.search(r'\sclass="companyName">',span.decode())
-	if name_match:
-		info_match = re.match(r'^(.)+\sCIK#:\s(\d)+',span.text)
-		info = info_match.group()
-		info = re.split(r'\sCIK#:\s',info)
-		fund = Fund(name = info[0], cik=info[1],list_of_holdings=[])
-print(fund)
+	try:
+		req = requests.get(url_start)
+		return doc = bs(req.text, "html.parser")
+	except RequestError:
+		return "There was an error with that request."
+def get_fund_name(doc):
+
+	comp_div = doc.find_all("span")
+	print(len(comp_div))
+	for span in comp_div:
+		name_match = re.search(r'\sclass="companyName">',span.decode())
+		if name_match:
+			info_match = re.match(r'^(.)+\sCIK#:\s(\d)+',span.text)
+			info = info_match.group()
+			info = re.split(r'\sCIK#:\s',info)
+			fund = Fund(name = info[0], cik=info[1],list_of_holdings=[])
+
+# print(fund)
 # print(comp_div)
-table = doc.find_all(summary="Results")
+	table = doc.find_all(summary="Results")
 # print(len(table))
 
-row_list = table[0].find_all('tr')
+	row_list = table[0].find_all('tr')
 # print(type(tr))
 # print(dir(doc))
 # print(tr_list)
@@ -80,7 +70,7 @@ for row in row_list[1:]:  #Skipping header row which is empty
 
 
 ## Second(inner) request ####
-
+''
 inner_req = requests.get(match_row_list[10].file_link)
 in_doc = bs(inner_req.text, "html.parser")
 print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
@@ -94,6 +84,7 @@ in_table = in_doc.find_all(summary="Document Format Files")
 
 # print(in_table[0])
 in_row_list = in_table[0].find_all('tr')
+''
 for in_row in in_row_list[1:]:
 	in_td = in_row.find_all('td')
 	# print(in_td[0]) 

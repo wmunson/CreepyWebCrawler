@@ -29,15 +29,15 @@ def check_req_results(req):
 def inital_req():
 	cik_input = input('Welcome! Please enter a CIK or Ticker. \nThe result of your search will be the "results" folder: ')
 
-	# 0001632554
-	# 0001166559
+	# 0001632554  #Trust Co
+	# 0001166559  #BMGF
 
-	cik_test = "0001632554"
+	cik_test = "0001166559"
 	date_test = ""
 	type_test = ""
 	count_test = "10000"
 
-	url_start = "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK="+cik_input+"&Stype="+type_test+"&dateb="+date_test+"&owner=exclude&count="+count_test
+	url_start = "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK="+cik_test+"&Stype="+type_test+"&dateb="+date_test+"&owner=exclude&count="+count_test
 	print(url_start)
 	return make_parse_req(url_start)
 

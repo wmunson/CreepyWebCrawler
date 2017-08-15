@@ -1,6 +1,3 @@
-from bs4 import BeautifulSoup as bs
-import requests
-import re
 
 class Holding:
 
@@ -25,7 +22,7 @@ class Holding:
 		self.sole_voting_auth = sole_voting_auth
 		self.shared_voting_auth = shared_voting_auth
 		self.no_voting_auth = no_voting_auth
-		self.writing_list = [self.date, self.name_of_issuer, self.title_of_class, 
+		self.writing_list = [self.name_of_issuer, self.title_of_class, 
 				self.cusip, self.value, self.shr_or_sh, self.prn_amt_prn, 
 				self.put_call, self.investment_discretion, 
 				self.other_manager, self.sole_voting_auth, 
@@ -33,6 +30,9 @@ class Holding:
 
 	def __str__(self):
 		return self.name_of_issuer
+
+
+
 
 
 class Fund:
@@ -45,14 +45,14 @@ class Fund:
 	def __str__(self):
 		return self.name
 
-
+		### Perfroms the writing to new files based on Fund name and each filing date
 	def write_file(self):
-		
 		print('len of holding list', len(self.list_of_holdings))
+		
 		for holding in self.list_of_holdings:
-			# print(holding)
-			with open(self.name+", "+holding.date,"a") as file:
-					file.write(("\t").join(holding.writing_list) + "\n")
+			print(holding.date)
+			file = open("results/"+self.name+", "+holding.date,"a")
+			file.write(("\t").join(holding.writing_list) + "\n")
 			file.close()
 				
 
@@ -66,25 +66,3 @@ class RowMatch:
 
 	def __str__(self):
 		return self.date+" "+self.details
-
-	def file_request(self):
-		
-		inner_req = requests.get(match_row_list[10].file_link)
-		in_doc = bs(inner_req.text, "html.parser")
-		in_table = in_doc.find_all(summary="Document Format Files")
-		in_row_list = in_table[0].find_all('tr')
-
-		for in_row in in_row_list[1:]: ### skips header row
-			in_td = in_row.find_all('td')
-			info_text =  in_td[3].text
-			info_check = re.match('INFORMATION TABLE', info_text)
-			file_href = in_td[2].select('a')[0]['href']
-			xml_text = in_td[2].text
-			xml_check = re.search(r'.xml$', xml_text)
-			
-			if info_check != None and xml_check != None:
-				file_req = requests.get("https://www.sec.gov"+file_href)
-				holding_doc = bs(file_req.text, "html.parser")
-				info_tabels = holding_doc.find_all("infotable")
-
-		return info_tabels
